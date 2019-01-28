@@ -81,4 +81,12 @@ public class SandwichRepresentation {
                 }).orElseThrow(() -> new NotFound("Intervenant inexistant"));
     }
 
+    @DeleteMapping(value="/id")
+    public ResponseEntity<?> deleteSandwich(@PathVariable("id") String id) throws NotFound,MethodNotAllowed{
+        return sr.findById(id).map( sandwich -> {
+            sr.delete(sandwich);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }).orElseThrow( () -> new NotFound("Sandwich not found"));
+    }
+
 }

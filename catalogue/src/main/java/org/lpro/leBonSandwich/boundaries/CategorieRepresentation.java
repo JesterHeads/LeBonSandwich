@@ -85,7 +85,10 @@ public class CategorieRepresentation {
 
     @DeleteMapping(value="/id")
     public ResponseEntity<?> deleteCategorie(@PathVariable("id") String id) throws NotFound,MethodNotAllowed{
-
+        return cr.findById(id).map( categorie -> {
+            cr.delete(categorie);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }).orElseThrow( () -> new NotFound("Categorie not found"));
     }
 }
 
