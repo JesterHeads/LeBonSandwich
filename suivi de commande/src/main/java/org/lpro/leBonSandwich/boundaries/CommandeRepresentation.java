@@ -9,6 +9,7 @@ import org.lpro.leBonSandwich.entity.Commande;
 import org.lpro.leBonSandwich.exception.BadRequest;
 import org.lpro.leBonSandwich.exception.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -38,8 +40,10 @@ public class CommandeRepresentation {
     } 
 
     @GetMapping
-    public ResponseEntity<?> getAllCommandes() {
-        Iterable<Commande> allCommandes = cr.findAll();
+    public ResponseEntity<?> getAllCommandes(
+            @RequestParam(value="page", required=false)Integer page,
+            @RequestParam(value="limit", required=false)Integer limit) {
+        Iterable<Commande> allCommandes = cr.findAll(PageRequest.of(page, limit));
         return new ResponseEntity<>(allCommandes,HttpStatus.OK);
     }
 
