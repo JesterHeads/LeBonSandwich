@@ -14,15 +14,19 @@ services:
     depends_on:
       - pgdb
   pgdb:
-    image: postgres
+    build: 
+      context: .
+      dockerfile : postgres.dockerfile
     ports:
       - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
     networks: 
       - isolated_nw2
     environment:
-      POSTGRES_DB : postgres
-      POSTGRES_USER : postgres
-      POSTGRES_PASSWORD : riovas
+      POSTGRES_DB : db
+      POSTGRES_USER : user
+      POSTGRES_PASSWORD : psswd
 networks:
   isolated_nw2:
     driver: bridge
