@@ -1,9 +1,11 @@
 package org.lpro.leBonSandwich.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Column;
 import javax.persistence.Table;
 
 @Entity
@@ -13,25 +15,27 @@ public class Commande {
     @Id
     private String id;
     private String nom;
-    private Date created_at;
+    @Column(name="created_at", nullable=false)
+    private Date createdAt;
     private Date livraison;
     private int status;
 
     public Commande () {}
 
-    public Commande (String nom, Date created_at, Date livraison, int status) {
+    public Commande (String nom, Date created, Date livraison, int status) {
+        //SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         this.nom  = nom;
-        this.created_at = created_at;
+        this.createdAt = created;
         this.livraison = livraison;
         this.status = status;
     }
 
-    public Date getCreated_at() {
-		return created_at;
+    public Date getcreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreated_at(Date created_at) {
-		this.created_at = created_at;
+	public void setcreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public Date getLivraison() {

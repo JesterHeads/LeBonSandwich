@@ -30,3 +30,7 @@ services:
 networks:
   isolated_nw2:
     driver: bridge
+
+volumes:
+  db-data:
+    driver: local

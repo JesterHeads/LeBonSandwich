@@ -2,6 +2,7 @@ package org.lpro.leBonSandwich.boundaries;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+import java.awt.print.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import org.lpro.leBonSandwich.entity.Commande;
 import org.lpro.leBonSandwich.exception.BadRequest;
 import org.lpro.leBonSandwich.exception.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpHeaders;
@@ -38,12 +40,27 @@ public class CommandeRepresentation {
     public CommandeRepresentation(CommandeRessource cr) {
         this.cr = cr;
     } 
-
+//@RequestParam(value="page", required=false)Optional<Integer> page,
+          //  @RequestParam(value="limit", required=false)Optional<Integer> limit
     @GetMapping
     public ResponseEntity<?> getAllCommandes(
-            @RequestParam(value="page", required=false)Integer page,
-            @RequestParam(value="limit", required=false)Integer limit) {
-        Iterable<Commande> allCommandes = cr.findAll(PageRequest.of(page, limit));
+        @RequestParam(value="status",required=false)Optional<Integer> status,
+        @RequestParam(value="page", required=false)Optional<Integer> page,
+        @RequestParam(value="limit", required=false,defaultValue="10")int limit) throws BadRequest {
+            PageRequest pageable = null;
+            if(page.isPresent() && page.get() > 0){
+                pageable = PageRequest.of(page.get(), limit);
+            } else {
+                pageable = PageRequest.of(1, limit);
+            }
+            Iterable<Commande> allCommandes = null;
+            if(status.isPresent()){
+                if(status.get() > 0 && status.get() <= 4){
+                    allCommandes = cr.findByStatusEqualsOrderByCreatedAtAscLivraisonAsc(status.get(),pageable);
+                } else throw new BadRequest("Veuillez choisir un statut de console valide");
+            } else {
+                allCommandes = cr.findAllByOrderByCreatedAtAscLivraisonAsc(pageable);
+            }
         return new ResponseEntity<>(allCommandes,HttpStatus.OK);
     }
 
