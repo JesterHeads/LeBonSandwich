@@ -1,12 +1,20 @@
 package org.lpro.leBonSandwich.boundaries;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.lpro.leBonSandwich.entity.Sandwich;
+import org.lpro.leBonSandwich.exception.BadRequest;
+import org.lpro.leBonSandwich.exception.MethodNotAllowed;
+import org.lpro.leBonSandwich.exception.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,18 +23,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
-import org.lpro.leBonSandwich.entity.Sandwich;
-import org.lpro.leBonSandwich.exception.NotFound;
-import org.lpro.leBonSandwich.exception.BadRequest;
-
-import java.util.Optional;
-import java.util.UUID;
 
 //Permet de définir un controller REST
 @RestController
 // Définition d'une route par défaut
-@RequestMapping(value="/sandwiches", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value="/sandwichs", produces = MediaType.APPLICATION_JSON_VALUE)
 @ExposesResourceFor(Sandwich.class)
 public class SandwichRepresentation {
     @Autowired
@@ -71,6 +72,7 @@ public class SandwichRepresentation {
                     sandwich.setId(sandwich.getId());
                     sandwich.setDesc(sandwichUpdated.getDesc());
                     sandwich.setNom(sandwichUpdated.getNom());
+                    sandwich.setPrix(sandwichUpdated.getPrix());
                     String errors = sandwich.isValid();
                     if(errors.isEmpty()){
                         sr.save(sandwich);

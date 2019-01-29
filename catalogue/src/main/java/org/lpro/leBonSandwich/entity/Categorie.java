@@ -1,9 +1,14 @@
 package org.lpro.leBonSandwich.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -14,6 +19,12 @@ public class Categorie {
     private String id;
     private String nom;
     private String desc;
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "categorie_sandwich", 
+      joinColumns = @JoinColumn(name = "categorie_id"), 
+      inverseJoinColumns = @JoinColumn(name = "sandwich_id"))
+    private Set<Sandwich> sandwichs;
 
     public Categorie() {}
 

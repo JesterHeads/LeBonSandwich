@@ -1,8 +1,12 @@
 package org.lpro.leBonSandwich.entity;
 
-import javax.persistence.Entity;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -14,6 +18,14 @@ public class Sandwich {
     private String nom;
     private String desc;
     private Double prix;
+    
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE
+            },
+            mappedBy = "sandwichs")
+    private Set<Categorie> categories;
 
     public Sandwich () {}
 
