@@ -1,12 +1,20 @@
 package org.lpro.leBonSandwich.boundaries;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.lpro.leBonSandwich.entity.Categorie;
+import org.lpro.leBonSandwich.exception.BadRequest;
+import org.lpro.leBonSandwich.exception.MethodNotAllowed;
+import org.lpro.leBonSandwich.exception.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,13 +23,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.lpro.leBonSandwich.entity.Categorie;
-import org.lpro.leBonSandwich.exception.BadRequest;
-import org.lpro.leBonSandwich.exception.NotFound;
-import org.lpro.leBonSandwich.exception.MethodNotAllowed;
-import java.security.cert.PKIXRevocationChecker.Option;
-import java.util.Optional;
-import java.util.UUID;
 
 
 
@@ -33,9 +34,12 @@ import java.util.UUID;
 public class CategorieRepresentation {
     @Autowired
     private final CategorieRessource cr;
-
-    public CategorieRepresentation(CategorieRessource cr) {
+    @Autowired
+    private final SandwichRessource sr;
+    
+    public CategorieRepresentation(CategorieRessource cr, SandwichRessource sr) {
         this.cr = cr;
+        this.sr = sr;
     } 
 
     @GetMapping
@@ -51,6 +55,15 @@ public class CategorieRepresentation {
                 .map(categorie -> new ResponseEntity<>(categorie.get(),HttpStatus.OK))
                 .orElseThrow(() -> new NotFound("Categorie not found"));
     }
+    
+    @GetMapping(value="/{id}/sandwichs")
+    public ResponseEntity<?> getSandwichsCategorieWithId (@PathVariable("id") String id) throws NotFound{
+        return Optional.ofNullable(cr.findById(id))
+                .filter(Optional::isPresent)
+                .map(categorie -> new ResponseEntity<>(sr.findByCategories_Id(id), HttpStatus.OK))
+                .orElseThrow(() -> new NotFound("Categorie not found"));
+    }
+
 
     @PostMapping
     public ResponseEntity<?> postCategorie(@RequestBody Categorie ctg) throws BadRequest{

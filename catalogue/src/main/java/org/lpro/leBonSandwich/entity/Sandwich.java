@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "sandwich")
 public class Sandwich {
@@ -19,12 +21,8 @@ public class Sandwich {
     private String desc;
     private Double prix;
     
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                CascadeType.PERSIST,
-                CascadeType.MERGE
-            },
-            mappedBy = "sandwichs")
+    @ManyToMany(mappedBy = "sandwichs", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Categorie> categories;
 
     public Sandwich () {}
@@ -33,6 +31,14 @@ public class Sandwich {
         this.nom  = nom;
         this.desc = desc;
         this.prix = prix;
+    }
+
+    public Set<Categorie> getCategories() {
+        return this.categories;
+    }
+
+    public void setCategories(Set<Categorie> categories) {
+        this.categories = categories;
     }
 
     public String getId() {

@@ -32,9 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SandwichRepresentation {
     @Autowired
     private final SandwichRessource sr;
+    @Autowired
+    private final CategorieRessource cr;
 
-    public SandwichRepresentation(SandwichRessource sr){
+    public SandwichRepresentation(SandwichRessource sr, CategorieRessource cr){
         this.sr = sr;
+        this.cr = cr;
     }
 
     @GetMapping
@@ -49,6 +52,14 @@ public class SandwichRepresentation {
                 .filter(Optional::isPresent)
                 .map(sandwich -> new ResponseEntity<>(sandwich.get(),HttpStatus.OK))
                 .orElseThrow(() -> new NotFound("Sandwich not found"));
+    }
+    
+    @GetMapping(value="/{id}/categories")
+    public ResponseEntity<?> getCategoriesSandiwchWithId (@PathVariable("id") String id) throws NotFound{
+        return Optional.ofNullable(sr.findById(id))
+                .filter(Optional::isPresent)
+                .map(categorie -> new ResponseEntity<>(cr.findBySandwichs_Id(id), HttpStatus.OK))
+                .orElseThrow(() -> new NotFound("Categorie not found"));
     }
 
     @PostMapping

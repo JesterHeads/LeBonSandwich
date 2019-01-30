@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "categorie")
 public class Categorie {
@@ -22,8 +24,9 @@ public class Categorie {
     
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "categorie_sandwich", 
-      joinColumns = @JoinColumn(name = "categorie_id"), 
-      inverseJoinColumns = @JoinColumn(name = "sandwich_id"))
+      joinColumns = @JoinColumn(name = "categorie_id", referencedColumnName = "id"), 
+      inverseJoinColumns = @JoinColumn(name = "sandwich_id", referencedColumnName = "id"))
+    @JsonIgnore
     private Set<Sandwich> sandwichs;
 
     public Categorie() {}
@@ -32,6 +35,15 @@ public class Categorie {
         this.nom = nom;
         this.desc = desc;
     }
+
+    public Set<Sandwich> getSandwichs() {
+        return this.sandwichs;
+    }
+
+    public void setSandwichs(Set<Sandwich> sandwichs) {
+        this.sandwichs = sandwichs;
+    }
+
 
     public String getId(){
         return this.id;
@@ -56,8 +68,6 @@ public class Categorie {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
-
 
     @Override
     public String toString() {
