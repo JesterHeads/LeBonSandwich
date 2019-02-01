@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
@@ -27,7 +29,7 @@ public class Categorie {
       joinColumns = @JoinColumn(name = "categorie_id", referencedColumnName = "id"), 
       inverseJoinColumns = @JoinColumn(name = "sandwich_id", referencedColumnName = "id"))
     @JsonIgnore
-    private Set<Sandwich> sandwichs;
+    private Set<Sandwich> sandwichs = new HashSet<>();
 
     public Categorie() {}
 

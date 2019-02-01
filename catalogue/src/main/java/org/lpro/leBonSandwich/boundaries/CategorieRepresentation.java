@@ -4,7 +4,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.util.Optional;
 import java.util.UUID;
-
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.lpro.leBonSandwich.entity.Categorie;
 import org.lpro.leBonSandwich.exception.BadRequest;
 import org.lpro.leBonSandwich.exception.MethodNotAllowed;
@@ -23,6 +27,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+import java.util.ArrayList;
 
 
 
@@ -42,17 +48,38 @@ public class CategorieRepresentation {
         this.sr = sr;
     } 
 
+    private Resources<Resource<Categorie>> categoriesToResource(Iterable<Categorie> categories) {
+        Link selfLink = linkTo(CategorieRepresentation.class).withSelfRel();
+        List<Resource<Categorie>> categorieResources = new ArrayList();
+        categories.forEach(categorie
+                -> categorieResources.add(categorieToResource(categorie, false)));
+        return new Resources<>(categorieResources, selfLink);
+    }
+    
+    private Resource<Categorie> categorieToResource(Categorie categorie, Boolean collection) {
+        Link selfLink = linkTo(CategorieRepresentation.class)
+                .slash(categorie.getId())
+                .withSelfRel();
+        if (collection) {
+            Link collectionLink = linkTo(CategorieRepresentation.class).withRel("collection");
+            Link sandwichsLink = linkTo(CategorieRepresentation.class).slash(categorie.getId()).slash("sandwichs").withRel("sandwichs");
+            return new Resource<>(categorie, selfLink, collectionLink,sandwichsLink);
+        } else {
+            return new Resource<>(categorie, selfLink);
+        }
+    }
+
     @GetMapping
-    public ResponseEntity<?> getAllIntervenants() {
-        Iterable<Categorie> allIntervenant = cr.findAll();
-        return new ResponseEntity<>(allIntervenant,HttpStatus.OK);
+    public ResponseEntity<?> getAllCategories() {
+        Iterable<Categorie> allCategories = cr.findAll();
+        return new ResponseEntity<>(categoriesToResource(allCategories),HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}")
     public ResponseEntity<?> getCategorieWithId (@PathVariable("id") String id) throws NotFound{
         return Optional.ofNullable(cr.findById(id))
                 .filter(Optional::isPresent)
-                .map(categorie -> new ResponseEntity<>(categorie.get(),HttpStatus.OK))
+                .map(categorie -> new ResponseEntity<>(categorieToResource(categorie.get(),true),HttpStatus.OK))
                 .orElseThrow(() -> new NotFound("Categorie not found"));
     }
     
@@ -73,14 +100,14 @@ public class CategorieRepresentation {
             Categorie newCtg = cr.save(ctg);
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.setLocation(linkTo(CategorieRepresentation.class).slash(newCtg.getId()).toUri());
-            return new ResponseEntity<>(newCtg,responseHeaders,HttpStatus.CREATED);
+            return new ResponseEntity<>(categorieToResource(newCtg, true),responseHeaders,HttpStatus.CREATED);
         } else {
             throw new BadRequest(errors);
         }
     }
 
     @PutMapping(value="/{id}")
-    public ResponseEntity<?> putSandwich(@RequestBody Categorie categorieUpdated, @PathVariable("id") String id) throws BadRequest,NotFound{
+    public ResponseEntity<?> putCategorie(@RequestBody Categorie categorieUpdated, @PathVariable("id") String id) throws BadRequest,NotFound{
         return cr.findById(id)
                 .map(categorie -> {
                     categorie.setId(categorie.getId());
