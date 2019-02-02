@@ -23,6 +23,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
+import java.util.ArrayList;
+import java.util.List;
 
 //Permet de définir un controller REST
 @RestController
@@ -40,17 +45,38 @@ public class SandwichRepresentation {
         this.cr = cr;
     }
 
+    private Resources<Resource<Sandwich>> sandwichsToResource(Iterable<Sandwich> sandwichs) {
+        Link selfLink = linkTo(SandwichRepresentation.class).withSelfRel();
+        List<Resource<Sandwich>> sandwichsResources = new ArrayList();
+        sandwichs.forEach(sandwich
+                -> sandwichsResources.add(sandwichToResource(sandwich, false)));
+        return new Resources<>(sandwichsResources, selfLink);
+    }
+    
+    private Resource<Sandwich> sandwichToResource(Sandwich sandwich, Boolean collection) {
+        Link selfLink = linkTo(SandwichRepresentation.class)
+                .slash(sandwich.getId())
+                .withSelfRel();
+        if (collection) {
+            Link collectionLink = linkTo(SandwichRepresentation.class).withRel("collection");
+            Link categoriesLink = linkTo(SandwichRepresentation.class).slash(sandwich.getId()).slash("categories").withRel("categories");
+            return new Resource<>(sandwich, selfLink, collectionLink,categoriesLink);
+        } else {
+            return new Resource<>(sandwich, selfLink);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllSandwichs(){
         Iterable<Sandwich> allSandwich = sr.findAll();
-        return new ResponseEntity<>(allSandwich,HttpStatus.OK);
+        return new ResponseEntity<>(sandwichsToResource(allSandwich),HttpStatus.OK);
     }
 
     @GetMapping(value ="/{id}")
     public ResponseEntity<?> getSandwich (@PathVariable("id") String id) throws NotFound{
         return Optional.ofNullable(sr.findById(id))
                 .filter(Optional::isPresent)
-                .map(sandwich -> new ResponseEntity<>(sandwich.get(),HttpStatus.OK))
+                .map(sandwich -> new ResponseEntity<>(sandwichToResource(sandwich.get(),true),HttpStatus.OK))
                 .orElseThrow(() -> new NotFound("Sandwich not found"));
     }
     
