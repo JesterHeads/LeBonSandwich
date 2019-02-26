@@ -19,15 +19,18 @@ public class Commande {
     private Date createdAt;
     private Date livraison;
     private int status;
+    private String token;
+    private String mail;
 
     public Commande () {}
 
-    public Commande (String nom, Date created, Date livraison, int status) {
+    public Commande (String nom, Date created, Date livraison, int status, String mail) {
         //SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         this.nom  = nom;
         this.createdAt = created;
         this.livraison = livraison;
         this.status = status;
+        this.mail = mail;
     }
 
     public Date getcreatedAt() {
@@ -77,5 +80,34 @@ public class Commande {
             valid += "le nom de la commande doit être défini"+System.getProperty("line.separator");
         }
         return valid;
+    }
+
+    /**
+     * @return the token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * @param token the token to set
+     */
+    public void setToken(String token) {
+        System.out.println(token);
+        this.token = token;
+    }
+
+    /**
+     * @return the mail
+     */
+    public String getMail() {
+        return mail;
+    }
+
+    /**
+     * @param mail the mail to set
+     */
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 }

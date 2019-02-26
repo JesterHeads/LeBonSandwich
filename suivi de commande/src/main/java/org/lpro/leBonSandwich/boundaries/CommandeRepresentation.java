@@ -3,6 +3,7 @@ package org.lpro.leBonSandwich.boundaries;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.awt.print.Pageable;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.lpro.leBonSandwich.entity.JwtResponse;
 
 
 //Permet de définir un controller REST
@@ -78,10 +81,19 @@ public class CommandeRepresentation {
     public ResponseEntity<?> postCommande(@RequestBody Commande ctg) throws BadRequest{
         ctg.setId(UUID.randomUUID().toString());
         String errors = ctg.isValid();
+
+        String jwtToken;
+
         if(errors.isEmpty()){
             Commande newCtg = cr.save(ctg);
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.setLocation(linkTo(CommandeRepresentation.class).slash(newCtg.getId()).toUri());
+
+            jwtToken = Jwts.builder().setSubject(newCtg.getId()).claim("roles", "commande").setIssuedAt(new Date()) //rajouter un param dans setIssuedAt pour l'expiration
+                .signWith(SignatureAlgorithm.HS256, "secretkey").compact();
+
+            newCtg.setToken(jwtToken);
+                
             return new ResponseEntity<>(newCtg,responseHeaders,HttpStatus.CREATED);
         } else {
             throw new BadRequest(errors);

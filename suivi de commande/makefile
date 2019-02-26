@@ -7,7 +7,7 @@ help:
 
 run: ## run compilation + server
 	mvn package -Dmaven.test.skip=true
-	docker-compose up -d --build
+	docker-compose up --build
 
 stop:
 	docker-compose down
