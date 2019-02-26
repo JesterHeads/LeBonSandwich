@@ -2,35 +2,37 @@ package org.lpro.leBonSandwich.boundaries;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-import java.awt.print.Pageable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.lpro.leBonSandwich.entity.Commande;
 import org.lpro.leBonSandwich.exception.BadRequest;
-import org.lpro.leBonSandwich.exception.MethodNotAllowed;
 import org.lpro.leBonSandwich.exception.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.lpro.leBonSandwich.entity.JwtResponse;
 
 
 //Permet de définir un controller REST
@@ -45,6 +47,27 @@ public class CommandeRepresentation {
     public CommandeRepresentation(CommandeRessource cr) {
         this.cr = cr;
     } 
+
+     private Resources<Resource<Commande>> commandesToResource(Iterable<Commande> commandes) {
+        Link selfLink = linkTo(CommandeRepresentation.class).withSelfRel();
+        List<Resource<Commande>> commandeResources = new ArrayList();
+        commandes.forEach(commande
+                -> commandeResources.add(commandeToResource(commande, false)));
+        return new Resources<>(commandeResources, selfLink);
+    }
+    
+    private Resource<Commande> commandeToResource(Commande commande, Boolean collection) {
+        Link selfLink = linkTo(CommandeRepresentation.class)
+                .slash(commande.getId())
+                .withSelfRel();
+        if (collection) {
+            Link collectionLink = linkTo(CommandeRepresentation.class).withRel("collection");
+            return new Resource<>(commande, selfLink, collectionLink);
+        } else {
+            return new Resource<>(commande, selfLink);
+        }
+    }
+
 //@RequestParam(value="page", required=false)Optional<Integer> page,
           //  @RequestParam(value="limit", required=false)Optional<Integer> limit
     @GetMapping
@@ -66,14 +89,14 @@ public class CommandeRepresentation {
             } else {
                 allCommandes = cr.findAllByOrderByCreatedAtAscLivraisonAsc(pageable);
             }
-        return new ResponseEntity<>(allCommandes,HttpStatus.OK);
+        return new ResponseEntity<>(commandesToResource(allCommandes),HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}")
     public ResponseEntity<?> getCommandeWithId (@PathVariable("id") String id) throws NotFound{
         return Optional.ofNullable(cr.findById(id))
                 .filter(Optional::isPresent)
-                .map(commande -> new ResponseEntity<>(commande.get(),HttpStatus.OK))
+                .map(commande -> new ResponseEntity<>(commandeToResource(commande.get(), true),HttpStatus.OK))
                 .orElseThrow(() -> new NotFound("Commande not found"));
     }
 
@@ -94,7 +117,7 @@ public class CommandeRepresentation {
 
             newCtg.setToken(jwtToken);
                 
-            return new ResponseEntity<>(newCtg,responseHeaders,HttpStatus.CREATED);
+            return new ResponseEntity<>(commandeToResource(newCtg, true),responseHeaders,HttpStatus.CREATED);
         } else {
             throw new BadRequest(errors);
         }
