@@ -1,11 +1,10 @@
 package org.lpro.leBonSandwich.entity;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Column;
 import javax.persistence.Table;
 
 @Entity
@@ -24,12 +23,12 @@ public class Commande {
 
     public Commande () {}
 
-    public Commande (String nom, Date created, Date livraison, int status, String mail) {
+    public Commande (String nom, Date livraison, String mail) {
         //SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         this.nom  = nom;
-        this.createdAt = created;
+        this.createdAt = new Date();
         this.livraison = livraison;
-        this.status = status;
+        this.status = 1;
         this.mail = mail;
     }
 
