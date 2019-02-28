@@ -51,27 +51,8 @@ public class CommandeRepresentation {
     public CommandeRepresentation(CommandeRessource cr) {
         this.cr = cr;
     } 
+    
 
-     private Resources<Resource<CommandeMirroir>> commandesToResource(Iterable<CommandeMirroir> commandes) {
-        Link selfLink = linkTo(CommandeRepresentation.class).withSelfRel();
-        List<Resource<CommandeMirroir>> commandeResources = new ArrayList();
-        commandes.forEach(commande
-                -> commandeResources.add(commandeToResource(commande, false)));
-        return new Resources<>(commandeResources, selfLink);
-    }
-    
-    private Resource<CommandeMirroir> commandeToResource(CommandeMirroir commande, Boolean collection) {
-        Link selfLink = linkTo(CommandeRepresentation.class)
-                .slash(commande.getId())
-                .withSelfRel();
-        if (collection) {
-            Link collectionLink = linkTo(CommandeRepresentation.class).withRel("collection");
-            return new Resource<>(commande, selfLink, collectionLink);
-        } else {
-            return new Resource<>(commande, selfLink);
-        }
-    }
-    
     private CommandeMirroir commandeToMirror(Commande c, Boolean showToken) {
     	CommandeMirroir cm = null;
     	if(showToken) {
@@ -81,9 +62,31 @@ public class CommandeRepresentation {
     	}
     	return cm;
     }
+     
+     private Resource<CommandeMirroir> commandeToResource(Commande commande, Boolean showToken, Boolean collection) {
+    	 
+    	 Link selfLink      = linkTo(CommandeRepresentation.class).slash(commande.getId()).withSelfRel();
+    	 CommandeMirroir cm = commandeToMirror(commande, showToken);
+         
+         if (collection) {
+             Link collectionLink = linkTo(CommandeRepresentation.class).withRel("collection");
+             return new Resource<>(cm, selfLink, collectionLink);
+         } else {
+             return new Resource<>(cm, selfLink);
+         }
+     }
+     
+     private Resources<Resource<CommandeMirroir>> commandesToResource(Iterable<Commande> commandes, Boolean showToken, Boolean collection) {
+    	 Link selfLink = linkTo(CommandeRepresentation.class).withSelfRel();
+    	 
+    	 List<Resource<CommandeMirroir>> commandeResources = new ArrayList();
+    	 commandes.forEach(commande -> commandeResources.add(commandeToResource(commande, showToken, collection)));
+         
+    	 return new Resources<>(commandeResources, selfLink);
+     }
+    
 
-//@RequestParam(value="page", required=false)Optional<Integer> page,
-          //  @RequestParam(value="limit", required=false)Optional<Integer> limit
+     
     @GetMapping
     public ResponseEntity<?> getAllCommandes(
         @RequestParam(value="status",required=false)Optional<Integer> status,
@@ -103,21 +106,16 @@ public class CommandeRepresentation {
             } else {
                 allCommandes = cr.findAllByOrderByCreatedAtAscLivraisonAsc(pageable);
             }
-            
-            Iterable<CommandeMirroir> cm = allCommandes.stream()
-    										.map(commande -> commandeToMirror(commande, false))
-    										.collect(Collectors.toList());
-    
-            return new ResponseEntity<>(commandesToResource(cm),HttpStatus.OK);
+   
+            return new ResponseEntity<>(commandesToResource(allCommandes, false, false),HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}")
-    public ResponseEntity<?> getCommandeWithId (@PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws NotFound{
+    public ResponseEntity<?> getCommandeWithIdAndToken (@PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws NotFound{
     	Optional<Commande> commande = cr.findByIdAndToken(id, headerToken);
     	
     	if(commande.isPresent()) {
-    		CommandeMirroir cm = commandeToMirror(commande.get(), false);
-    		return new ResponseEntity<>(cm ,HttpStatus.OK);
+    		return new ResponseEntity<>(commandeToResource(commande.get(), false, true) ,HttpStatus.OK);
     	}
     	
         throw new NotFound("Commande not found");
@@ -128,20 +126,19 @@ public class CommandeRepresentation {
         ctg.setId(UUID.randomUUID().toString());
         String errors = ctg.isValid();
 
-        String jwtToken;
+        String jwtToken = Jwts.builder()
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS256, "cmdSecret")
+                .compact();
+        
+        ctg.setToken(jwtToken);
+        
 
         if(errors.isEmpty()){
             Commande newCtg = cr.save(ctg);
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.setLocation(linkTo(CommandeRepresentation.class).slash(newCtg.getId()).toUri());
-
-            jwtToken = Jwts.builder().setSubject(newCtg.getId()).claim("roles", "commande").setIssuedAt(new Date()) //rajouter un param dans setIssuedAt pour l'expiration
-                .signWith(SignatureAlgorithm.HS256, "secretkey").compact();
-
-            newCtg.setToken(jwtToken);
-            
-            CommandeMirroir cm = commandeToMirror(newCtg, true); 
-            return new ResponseEntity<>(commandeToResource(cm, true),responseHeaders,HttpStatus.CREATED);
+            return new ResponseEntity<>(commandeToResource(newCtg, true, true),responseHeaders,HttpStatus.CREATED);
         } else {
             throw new BadRequest(errors);
         }
@@ -158,13 +155,11 @@ public class CommandeRepresentation {
     		
     		if(errors.isEmpty()){
                 cr.save(c);
-                CommandeMirroir cm = commandeToMirror(c, false);
                 
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.setLocation(linkTo(CommandeRepresentation.class).slash(c.getId()).toUri());
-                return new ResponseEntity<>(commandeToResource(cm, true), responseHeaders, HttpStatus.CREATED);
+                return new ResponseEntity<>(commandeToResource(c, false, true), responseHeaders, HttpStatus.CREATED);
             } else throw new BadRequest(errors);
-    		
     	}
     	
     	throw new NotFound("Intervenant inexistant");

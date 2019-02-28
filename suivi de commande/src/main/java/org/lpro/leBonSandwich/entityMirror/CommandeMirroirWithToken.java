@@ -2,7 +2,10 @@ package org.lpro.leBonSandwich.entityMirror;
 
 import java.util.Date;
 
+import org.springframework.hateoas.core.Relation;
 
+
+@Relation(collectionRelation = "commandes")
 public class CommandeMirroirWithToken extends CommandeMirroir {
 
   
