@@ -1,6 +1,7 @@
 package org.lpro.leBonSandwich.entityMirror;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.hateoas.core.Relation;
 
@@ -69,4 +70,6 @@ public class CommandeMirroir {
     public void setMail(String mail) {
         this.mail = mail;
     }
+    
+    
 }

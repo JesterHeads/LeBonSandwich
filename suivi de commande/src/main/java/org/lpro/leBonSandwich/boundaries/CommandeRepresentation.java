@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.lpro.leBonSandwich.entity.Commande;
+import org.lpro.leBonSandwich.entity.Item;
 import org.lpro.leBonSandwich.entityMirror.CommandeMirroir;
+import org.lpro.leBonSandwich.entityMirror.CommandeMirroirWithDetails;
 import org.lpro.leBonSandwich.entityMirror.CommandeMirroirWithToken;
+import org.lpro.leBonSandwich.entityMirror.ItemMirroir;
 import org.lpro.leBonSandwich.exception.BadRequest;
 import org.lpro.leBonSandwich.exception.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,21 +56,42 @@ public class CommandeRepresentation {
     } 
     
 
-    private CommandeMirroir commandeToMirror(Commande c, Boolean showToken) {
+    private CommandeMirroir commandeToMirror(Commande c, Boolean showToken, Boolean showDetail) {
     	CommandeMirroir cm = null;
-    	if(showToken) {
-    		cm = new CommandeMirroirWithToken(c.getId(), c.getNom(), c.getcreatedAt(), c.getLivraison(), c.getStatus(), c.getMail(), c.getToken());
+    	
+    	if(!showToken && !showDetail) {
+    		cm = new CommandeMirroir(c.getId(), c.getNom(), c.getcreatedAt(), c.getLivraison(), c.getStatus(), c.getMail());
     	}else {
-    		 cm = new CommandeMirroir(c.getId(), c.getNom(), c.getcreatedAt(), c.getLivraison(), c.getStatus(), c.getMail());
+    		
+    		 List<ItemMirroir> itemsMirroir = new ArrayList();
+	   	   	 Set<Item> itemsList = c.getItems();
+	   	   	 
+	   	   	 if(itemsList != null && !itemsList.isEmpty()) {
+	   	   		itemsList.forEach(item -> itemsMirroir.add(itemToMirror(item)));
+	   	   	 }
+    		
+    		if(showToken) {
+        		cm = new CommandeMirroirWithToken(c.getId(), c.getNom(), c.getcreatedAt(), c.getLivraison(), c.getStatus(), c.getMail(), itemsMirroir, c.getToken());
+        	}else if(showDetail){
+        		 cm = new CommandeMirroirWithDetails(c.getId(), c.getNom(), c.getcreatedAt(), c.getLivraison(), c.getStatus(), c.getMail(), itemsMirroir);
+        	}
     	}
+	   	 
     	return cm;
     }
+    
+    
+    private ItemMirroir itemToMirror(Item i) {
+    	return new ItemMirroir(i.getUri(), i.getQuantite());
+    }
+    
+
      
-     private Resource<CommandeMirroir> commandeToResource(Commande commande, Boolean showToken, Boolean collection) {
+     private Resource<CommandeMirroir> commandeToResource(Commande commande, Boolean showToken, Boolean collection, Boolean showDetail) {
     	 
     	 Link selfLink      = linkTo(CommandeRepresentation.class).slash(commande.getId()).withSelfRel();
-    	 CommandeMirroir cm = commandeToMirror(commande, showToken);
-         
+    	 CommandeMirroir cm = commandeToMirror(commande, showToken, showDetail);
+    	 
          if (collection) {
              Link collectionLink = linkTo(CommandeRepresentation.class).withRel("collection");
              return new Resource<>(cm, selfLink, collectionLink);
@@ -76,15 +100,26 @@ public class CommandeRepresentation {
          }
      }
      
-     private Resources<Resource<CommandeMirroir>> commandesToResource(Iterable<Commande> commandes, Boolean showToken, Boolean collection) {
+     
+     
+     private Resources<Resource<CommandeMirroir>> commandesToResource(Iterable<Commande> commandes, Boolean showToken, Boolean collection, Boolean showDetail) {
     	 Link selfLink = linkTo(CommandeRepresentation.class).withSelfRel();
     	 
     	 List<Resource<CommandeMirroir>> commandeResources = new ArrayList();
-    	 commandes.forEach(commande -> commandeResources.add(commandeToResource(commande, showToken, collection)));
+    	 commandes.forEach(commande -> commandeResources.add(commandeToResource(commande, showToken, collection, showDetail)));
          
     	 return new Resources<>(commandeResources, selfLink);
      }
-    
+     
+     
+     
+     private String generateToken() {
+    	 String jwtToken = Jwts.builder()
+                 .setIssuedAt(new Date())
+                 .signWith(SignatureAlgorithm.HS256, "cmdSecret")
+                 .compact();
+    	 return jwtToken;
+     }
 
      
     @GetMapping
@@ -107,7 +142,7 @@ public class CommandeRepresentation {
                 allCommandes = cr.findAllByOrderByCreatedAtAscLivraisonAsc(pageable);
             }
    
-            return new ResponseEntity<>(commandesToResource(allCommandes, false, false),HttpStatus.OK);
+            return new ResponseEntity<>(commandesToResource(allCommandes, false, false, false),HttpStatus.OK);
     }
 
     @GetMapping(value="/{id}")
@@ -115,7 +150,7 @@ public class CommandeRepresentation {
     	Optional<Commande> commande = cr.findByIdAndToken(id, headerToken);
     	
     	if(commande.isPresent()) {
-    		return new ResponseEntity<>(commandeToResource(commande.get(), false, true) ,HttpStatus.OK);
+    		return new ResponseEntity<>(commandeToResource(commande.get(), false, true, true) ,HttpStatus.OK);
     	}
     	
         throw new NotFound("Commande not found");
@@ -126,11 +161,8 @@ public class CommandeRepresentation {
         ctg.setId(UUID.randomUUID().toString());
         String errors = ctg.isValid();
 
-        String jwtToken = Jwts.builder()
-                .setIssuedAt(new Date())
-                .signWith(SignatureAlgorithm.HS256, "cmdSecret")
-                .compact();
         
+        String jwtToken = generateToken();
         ctg.setToken(jwtToken);
         
 
@@ -138,12 +170,13 @@ public class CommandeRepresentation {
             Commande newCtg = cr.save(ctg);
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.setLocation(linkTo(CommandeRepresentation.class).slash(newCtg.getId()).toUri());
-            return new ResponseEntity<>(commandeToResource(newCtg, true, true),responseHeaders,HttpStatus.CREATED);
+            return new ResponseEntity<>(commandeToResource(newCtg, true, true, true),responseHeaders,HttpStatus.CREATED);
         } else {
             throw new BadRequest(errors);
         }
     }
 
+    //TODO faire le put
     @PutMapping(value="/{id}")
     public ResponseEntity<?> putCommande(@RequestBody Commande commandeUpdated, @PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws BadRequest,NotFound{
         
@@ -158,18 +191,26 @@ public class CommandeRepresentation {
                 
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.setLocation(linkTo(CommandeRepresentation.class).slash(c.getId()).toUri());
-                return new ResponseEntity<>(commandeToResource(c, false, true), responseHeaders, HttpStatus.CREATED);
+                return new ResponseEntity<>(commandeToResource(c, false, true, true), responseHeaders, HttpStatus.CREATED);
             } else throw new BadRequest(errors);
     	}
     	
     	throw new NotFound("Intervenant inexistant");
     }
 
+    
     @DeleteMapping(value="/{id}")
-    public ResponseEntity<?> deleteCommande(@PathVariable("id") String id) {
-        Commande commande = cr.findById(id).orElseThrow(() -> new NotFound("Commande inexistante"));
-        cr.delete(commande);
-        return new ResponseEntity<>(commande, HttpStatus.OK);
+    public ResponseEntity<?> deleteCommande(@PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) {
+    	
+    	Optional<Commande> commande = cr.findByIdAndToken(id, headerToken);
+    	
+    	if(commande.isPresent()) {
+    		Commande c = commande.get();
+    		cr.delete(c);
+            return new ResponseEntity<>(commandeToResource(c, false, true, true), HttpStatus.OK);
+    	}
+    		
+    	throw new NotFound("Commande inexistante");
     }
 
 }

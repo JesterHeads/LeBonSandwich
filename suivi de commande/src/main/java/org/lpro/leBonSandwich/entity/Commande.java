@@ -1,10 +1,14 @@
-package org.lpro.leBonSandwich.entity;
+ package org.lpro.leBonSandwich.entity;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -20,6 +24,9 @@ public class Commande {
     private int status;
     private String token;
     private String mail;
+    
+    @OneToMany(mappedBy="commande", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    private Set<Item> items;
 
     public Commande () {}
 
@@ -109,4 +116,14 @@ public class Commande {
     public void setMail(String mail) {
         this.mail = mail;
     }
+
+	public Set<Item> getItems() {
+		return items;
+	}
+
+	public void setItems(Set<Item> items) {
+		this.items = items;
+	}
+    
+    
 }
