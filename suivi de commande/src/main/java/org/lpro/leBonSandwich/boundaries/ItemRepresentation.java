@@ -41,7 +41,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 //Permet de définir un controller REST
 @RestController
 // Définition d'une route par défaut
-@RequestMapping(value="/items", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 @ExposesResourceFor(Item.class)
 public class ItemRepresentation {
 	@Autowired
@@ -71,14 +71,20 @@ public class ItemRepresentation {
 	 
 	 	return new Resources<>(ItemResources, selfLink);
 	}
-	 
-	@GetMapping
+	
+	@GetMapping(value="/items")
     public ResponseEntity<?> getAllItems(){
         Iterable<Item> allItem = ir.findAll();
         return new ResponseEntity<>(ItemsToResource(allItem),HttpStatus.OK);
+	}
+	
+	@GetMapping(value="commandes/{id}/items")
+    public ResponseEntity<?> getCommandeItems (@PathVariable("id") String id) throws NotFound{
+        Iterable<Item> command_item = ir.findByCommande_Id(id) ;
+    	return new ResponseEntity<>(command_item,HttpStatus.OK);
     }
 
-	@GetMapping(value="/{id}")
+	@GetMapping(value="/items/{id}")
 	public ResponseEntity<?> getItemWithId (@PathVariable("id") String id) throws NotFound{
 		Optional<Item> Item = ir.findById(id);
 		
@@ -89,10 +95,9 @@ public class ItemRepresentation {
 		throw new NotFound("Item not found");
 	}
 
-	@PostMapping
+	@PostMapping(value="/commandes/{id}/items")
 	public ResponseEntity<?> postItem(@RequestBody Item it) throws BadRequest{
 		it.setId(UUID.randomUUID().toString());
-		
 		Item newIt = ir.save(it);
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.setLocation(linkTo(ItemRepresentation.class).slash(newIt.getId()).toUri());

@@ -50,9 +50,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class CommandeRepresentation {
     @Autowired
     private final CommandeRessource cr;
+    private final ItemRessource ir;
 
-    public CommandeRepresentation(CommandeRessource cr) {
+    public CommandeRepresentation(CommandeRessource cr,ItemRessource ir) {
         this.cr = cr;
+        this.ir = ir;
     } 
     
 
@@ -89,14 +91,15 @@ public class CommandeRepresentation {
      
      private Resource<CommandeMirroir> commandeToResource(Commande commande, Boolean showToken, Boolean collection, Boolean showDetail) {
     	 
-    	 Link selfLink      = linkTo(CommandeRepresentation.class).slash(commande.getId()).withSelfRel();
+         Link selfLink      = linkTo(CommandeRepresentation.class).slash(commande.getId()).withSelfRel();
+         Link commanditems = linkTo(CommandeRepresentation.class).slash(commande.getId()).slash("items").withRel("items");
     	 CommandeMirroir cm = commandeToMirror(commande, showToken, showDetail);
     	 
          if (collection) {
              Link collectionLink = linkTo(CommandeRepresentation.class).withRel("collection");
              return new Resource<>(cm, selfLink, collectionLink);
          } else {
-             return new Resource<>(cm, selfLink);
+             return new Resource<>(cm, selfLink, commanditems);
          }
      }
      

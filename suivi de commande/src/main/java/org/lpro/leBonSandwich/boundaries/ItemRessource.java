@@ -8,4 +8,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ItemRessource extends JpaRepository<Item, String> {
+	List<Item> findByCommande_Id(String commandeId);
 }

@@ -18,9 +18,8 @@ CREATE TABLE commande (
 
 
 DROP TABLE IF EXISTS item;
-CREATE SEQUENCE item_seq;
 CREATE TABLE item (
-  id int NOT NULL DEFAULT NEXTVAL ('item_seq'),
+  id varchar(128) NOT NULL,
   uri varchar(128) NOT NULL,
   libelle varchar(128) DEFAULT NULL,
   tarif decimal(8,2) DEFAULT NULL,
