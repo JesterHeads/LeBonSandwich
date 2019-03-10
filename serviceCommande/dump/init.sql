@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS commande;
 CREATE TABLE commande (
   id varchar(128) NOT NULL,
-  created_at timestamp(0) NOT NULL,
+  created_at timestamp(0),
   updated_at timestamp(0) DEFAULT NULL,
   livraison timestamp(0) NOT NULL,
   nom varchar(128) NOT NULL,
@@ -10,6 +10,8 @@ CREATE TABLE commande (
   remise decimal(8,2) DEFAULT NULL,
   token varchar(256) DEFAULT NULL,
   client_id int DEFAULT NULL,
+  carte_paiement varchar(128) DEFAULT NULL,
+  expiration_paiement varchar(128) DEFAULT NULL,
   ref_paiement varchar(128) DEFAULT NULL,
   date_paiement timestamp(0) DEFAULT NULL,
   mode_paiement int DEFAULT NULL,

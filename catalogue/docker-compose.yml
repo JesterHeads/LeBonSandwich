@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  restservice:
+    build: 
+      context: .
+      dockerfile : restservice.dockerfile
+    ports:
+      - "8080:8080"
+    volumes: 
+      - /tmp

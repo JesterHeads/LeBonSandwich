@@ -17,13 +17,25 @@ public class Commande {
 
     @Id
     private String id;
-    private String nom;
-    @Column(name="created_at", nullable=false)
-    private Date createdAt;
+    @Column(name="created_at")
+    private Date createdAt = new Date();
     private Date livraison;
-    private int status;
-    private String token;
+    private String nom;
     private String mail;
+    private Float montant;
+    private Float remise;
+    private String token;
+    @Column(name="carte_paiement")
+    private String cartePaiement;
+    @Column(name="expiration_paiement")
+    private String expirationPaiement;
+    @Column(name="ref_paiement")
+    private String refPaiement;
+    @Column(name="date_paiement")
+    private Date datePaiement;
+    @Column(name="mode_paiement")
+    private Integer modePaiement;
+    private Integer status = 1;
     
     @OneToMany(mappedBy="commande", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private Set<Item> items;
@@ -31,11 +43,8 @@ public class Commande {
     public Commande () {}
 
     public Commande (String nom, Date livraison, String mail) {
-        //SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         this.nom  = nom;
-        this.createdAt = new Date();
         this.livraison = livraison;
-        this.status = 1;
         this.mail = mail;
     }
 
@@ -55,7 +64,7 @@ public class Commande {
 		this.livraison = livraison;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
@@ -124,6 +133,48 @@ public class Commande {
 	public void setItems(Set<Item> items) {
 		this.items = items;
 	}
+
+	public String getRefPaiement() {
+		return refPaiement;
+	}
+
+	public void setRefPaiement(String refPaiement) {
+		this.refPaiement = refPaiement;
+	}
+
+	public Date getDatePaiement() {
+		return datePaiement;
+	}
+
+	public void setDatePaiement(Date datePaiement) {
+		this.datePaiement = datePaiement;
+	}
+
+	public Integer getModePaiement() {
+		return modePaiement;
+	}
+
+	public void setModePaiement(Integer modePaiement) {
+		this.modePaiement = modePaiement;
+	}
+
+	public String getCartePaiement() {
+		return cartePaiement;
+	}
+
+	public void setCartePaiement(String cartePaiement) {
+		this.cartePaiement = cartePaiement;
+	}
+
+	public String getExpirationPaiement() {
+		return expirationPaiement;
+	}
+
+	public void setExpirationPaiement(String expirationPaiement) {
+		this.expirationPaiement = expirationPaiement;
+	}
+	
+	
     
     
 }
