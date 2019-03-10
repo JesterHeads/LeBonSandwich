@@ -1,4 +1,4 @@
-package org.lpro.oauthjwt.entity;
+package org.lpro.leBonSandwich.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;

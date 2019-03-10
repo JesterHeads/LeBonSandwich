@@ -1,6 +1,6 @@
-package org.lpro.oauthjwt.boundary;
+package org.lpro.leBonSandwich.boundaries;
 
-import org.lpro.oauthjwt.entity.Role;
+import org.lpro.leBonSandwich.entity.Role;
 import org.springframework.data.repository.CrudRepository;
 
 public interface RoleRepository extends CrudRepository<Role, Long> {

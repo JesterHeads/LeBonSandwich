@@ -1,4 +1,4 @@
-package org.lpro.oauthjwt.entity;
+package org.lpro.leBonSandwich.entity;
 
 import javax.persistence.*;
 

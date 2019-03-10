@@ -1,4 +1,4 @@
-package org.lpro.oauthjwt.config;
+package org.lpro.leBonSandwich.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

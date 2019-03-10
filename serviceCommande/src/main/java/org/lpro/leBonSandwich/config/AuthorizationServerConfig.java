@@ -1,4 +1,4 @@
-package org.lpro.oauthjwt.config;
+package org.lpro.leBonSandwich.config;
 
 import java.util.Arrays;
 
