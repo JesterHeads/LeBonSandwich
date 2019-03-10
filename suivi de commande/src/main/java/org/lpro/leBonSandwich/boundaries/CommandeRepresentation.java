@@ -29,6 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -148,17 +149,12 @@ public class CommandeRepresentation {
             return new ResponseEntity<>(commandesToResource(allCommandes, false, false, false),HttpStatus.OK);
     }
 
-    @GetMapping(value="/{id}")
-    public ResponseEntity<?> getCommandeWithIdAndToken (@PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws NotFound{
-    	Optional<Commande> commande = cr.findByIdAndToken(id, headerToken);
-    	
-    	if(commande.isPresent()) {
-    		return new ResponseEntity<>(commandeToResource(commande.get(), false, true, true) ,HttpStatus.OK);
-    	}
-    	
-        throw new NotFound("Commande not found");
-    }
-
+    /**
+     * Créer une nouvelle commande
+     * @param ctg
+     * @return
+     * @throws BadRequest
+     */
     @PostMapping
     public ResponseEntity<?> postCommande(@RequestBody Commande ctg) throws BadRequest{
         ctg.setId(UUID.randomUUID().toString());
@@ -178,8 +174,68 @@ public class CommandeRepresentation {
             throw new BadRequest(errors);
         }
     }
+    
+    /**
+     * Obtenir une commande pour voir son état
+     * @param id
+     * @param headerToken
+     * @return
+     * @throws NotFound
+     */
+    @GetMapping(value="/{id}")
+    public ResponseEntity<?> getCommandeWithIdAndToken (@PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws NotFound{
+    	Optional<Commande> commande = cr.findByIdAndToken(id, headerToken);
+    	
+    	if(commande.isPresent()) {
+    		return new ResponseEntity<>(commandeToResource(commande.get(), false, true, true) ,HttpStatus.OK);
+    	}
+    	
+        throw new NotFound("Commande not found");
+    }
+    
+    /**
+     * Modifie une commande (date de livraison)
+     * @param commandeUpdated
+     * @param id
+     * @param headerToken
+     * @return
+     * @throws BadRequest
+     * @throws NotFound
+     */
+    @PatchMapping(value="/{id}")
+    public ResponseEntity<?> patchCommande(@RequestBody Commande commandeUpdated, @PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws BadRequest,NotFound{
+        
+    	Optional<Commande> commande = cr.findByIdAndToken(id, headerToken);
+    	
+    	if(commande.isPresent()) {
+    		Commande c = commande.get();
+    		
+    		Date livraison = commandeUpdated.getLivraison();
+    		c.setLivraison(livraison);
+    		
+    		String errors = c.isValid();
+    		
+    		if(errors.isEmpty()){
+                cr.save(c);
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.setLocation(linkTo(CommandeRepresentation.class).slash(c.getId()).toUri());
+                return new ResponseEntity<>(commandeToResource(c, false, true, true), responseHeaders, HttpStatus.OK);
+            } else throw new BadRequest(errors);
+    	}
+    	
+    	throw new NotFound("Intervenant inexistant");
+    }
+    
 
-    //TODO faire le put
+    /**
+     * Payer une commande en transmettant des coordonnées bancaires – (n°carte+date expiration)
+     * @param commandeUpdated
+     * @param id
+     * @param headerToken
+     * @return
+     * @throws BadRequest
+     * @throws NotFound
+     */
     @PutMapping(value="/{id}")
     public ResponseEntity<?> putCommande(@RequestBody Commande commandeUpdated, @PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws BadRequest,NotFound{
         
