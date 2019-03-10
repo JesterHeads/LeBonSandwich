@@ -9,7 +9,6 @@ org/lpro/leBonSandwich/boundaries/CommandeRepresentation.class
 org/lpro/leBonSandwich/control/GenericService.class
 org/lpro/leBonSandwich/config/ResourceServerConfig.class
 org/lpro/leBonSandwich/config/AuthorizationServerConfig.class
-main/java/org/lpro/leBonSandwich/boundaries/UserController.class
 org/lpro/leBonSandwich/control/impl/AppUserDetailsService.class
 org/lpro/leBonSandwich/boundaries/RoleRepository.class
 org/lpro/leBonSandwich/exception/MethodNotAllowed.class

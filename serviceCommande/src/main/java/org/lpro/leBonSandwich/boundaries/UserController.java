@@ -1,4 +1,4 @@
-package main.java.org.lpro.leBonSandwich.boundaries;
+package org.lpro.leBonSandwich.boundaries;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

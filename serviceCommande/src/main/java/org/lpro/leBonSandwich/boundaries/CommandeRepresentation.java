@@ -223,7 +223,7 @@ public class CommandeRepresentation {
             } else throw new BadRequest(errors);
     	}
     	
-    	throw new NotFound("Intervenant inexistant");
+    	throw new NotFound("Commande inexistante");
     }
     
 
@@ -244,19 +244,53 @@ public class CommandeRepresentation {
     	
     	if(commande.isPresent()) {
     		Commande c = commande.get();
+    		
+    		if(c.getStatus() == 1) {
+    			c.setCartePaiement(commandeUpdated.getCartePaiement());
+    			c.setExpirationPaiement(commandeUpdated.getExpirationPaiement());
+    			c.setDatePaiement(new Date());
+    			c.setModePaiement(1);
+    			c.setStatus(2);
+    		}else {
+    			throw new BadRequest("Impossible de payer cette commande");
+    		}
+    		
     		String errors = c.isValid();
     		
     		if(errors.isEmpty()){
                 cr.save(c);
-                
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.setLocation(linkTo(CommandeRepresentation.class).slash(c.getId()).toUri());
-                return new ResponseEntity<>(commandeToResource(c, false, true, true), responseHeaders, HttpStatus.CREATED);
+                return new ResponseEntity<>(commandeToResource(c, false, true, true), responseHeaders, HttpStatus.OK);
             } else throw new BadRequest(errors);
     	}
     	
-    	throw new NotFound("Intervenant inexistant");
+    	throw new NotFound("Commande inexistante");
     }
+  
+  /**
+   * Obtenir une facture d'une commande payée
+   * @param id
+   * @param headerToken
+   * @return
+   * @throws NotFound
+   */
+  @GetMapping(value="/{id}/facture")
+  public ResponseEntity<?> getCommandeFacture (@PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws BadRequest, NotFound{
+  	Optional<Commande> commande = cr.findByIdAndToken(id, headerToken);
+  	
+  	if(commande.isPresent()) {
+  		Commande c = commande.get();
+  		if(c.getStatus() == 2) {
+  			return new ResponseEntity<>(commande.get() ,HttpStatus.OK);
+  		}else {
+  			throw new BadRequest("La facture doit avoir le status payé (2)");
+  		}
+  		
+  	}
+  	
+      throw new NotFound("Commande not found");
+  }
 
     
     @DeleteMapping(value="/{id}")

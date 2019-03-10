@@ -1,16 +1,28 @@
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/entityMirror/CommandeMirroir.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/entity/Commande.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/DevWebServiceApplication.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/exception/BadRequest.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/exception/NotFound.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/boundaries/ItemRepresentation.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/entityMirror/ItemMirroir.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/entityMirror/CommandeMirroirWithDetails.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/boundaries/CommandeRessource.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/exception/MethodNotAllowed.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/exception/InternalServerError.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/boundaries/ItemRessource.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/entityMirror/CommandeMirroirWithToken.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/entity/JwtResponse.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/boundaries/CommandeRepresentation.java
-/Users/benji/Desktop/cours/LP/Dev-WebServices/Le Bon Sandwich/LeBonSandwich/suivi de commande/src/main/java/org/lpro/leBonSandwich/entity/Item.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/control/impl/AppUserDetailsService.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entity/JwtResponse.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/config/ResourceServerConfig.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/config/CorsAdditionalConfig.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entity/Commande.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entity/Role.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/config/AuthorizationServerConfig.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/boundaries/UserRepository.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/boundaries/RoleRepository.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/config/SecurityConfig.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entityMirror/ItemMirroir.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entityMirror/CommandeMirroirWithDetails.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/boundaries/CommandeRepresentation.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/exception/BadRequest.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/control/impl/GenericServiceImpl.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/boundaries/UserController.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entityMirror/CommandeMirroir.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/exception/InternalServerError.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/boundaries/ItemRessource.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/exception/NotFound.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entity/Item.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/boundaries/ItemRepresentation.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/boundaries/CommandeRessource.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entity/User.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/DevWebServiceApplication.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/control/GenericService.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/entityMirror/CommandeMirroirWithToken.java
+/Users/johan/Documents/Ciasie/Webservices/LeBonSandwich/serviceCommande/src/main/java/org/lpro/leBonSandwich/exception/MethodNotAllowed.java
