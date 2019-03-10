@@ -24,6 +24,5 @@
 /nbdist/
 /.nb-gradle/
 
-pom.xml
 src/main/resources/application.properties
 /data/
