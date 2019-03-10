@@ -14,8 +14,33 @@ CREATE TABLE commande (
   date_paiement timestamp(0) DEFAULT NULL,
   mode_paiement int DEFAULT NULL,
   status int NOT NULL DEFAULT 1
-) ;
+);
 
+DROP TABLE IF EXISTS app_role;
+CREATE TABLE app_role (
+  id varchar(255) NOT NULL,
+  description varchar(255) DEFAULT NULL,
+  role_name varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS app_user;
+CREATE TABLE app_user (
+  id varchar(255) NOT NULL,
+  first_name varchar(255) NOT NULL,
+  last_name varchar(255) NOT NULL,
+  password varchar(255) NOT NULL,
+  username varchar(255) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS user_role;
+CREATE TABLE user_role (
+  user_id varchar(255) NOT NULL,
+  role_id varchar(255) NOT NULL,
+  CONSTRAINT FK65453245 FOREIGN KEY (user_id) REFERENCES app_user (id),
+  CONSTRAINT FK98243789 FOREIGN KEY (role_id) REFERENCES app_role (id)
+);
 
 DROP TABLE IF EXISTS item;
 CREATE TABLE item (
@@ -26,7 +51,19 @@ CREATE TABLE item (
   quantite int DEFAULT 1,
   command_id varchar(128) NOT NULL,
   PRIMARY KEY (id)
-) ;
+);
+
+INSERT INTO app_role (id, role_name, description) VALUES (1, 'STANDARD_USER', 'Standard User');
+INSERT INTO app_role (id, role_name, description) VALUES (2, 'ADMIN_USER', 'Admin User');
+
+-- USER (password: jwtpass) $2y$10$MZECL7TSzJiLd32CfIfRzuWu2xlLFxmxnQ2IIfST2UyWOB59JEPEa
+INSERT INTO app_user (id, first_name, last_name, password, username) VALUES (1, 'John', 'Doe', '$2a$10$bj7qFEPpCcYOPqncrWQAnOGZ3onz78ipBoykaV9vidBFZxmhcfcHa', 'john.doe');
+INSERT INTO app_user (id, first_name, last_name, password, username) VALUES (2, 'Admin', 'Admin', '$2a$10$qtH0F1m488673KwgAfFXEOWxsoZSeHqqlB/8BTt3a6gsI5c2mdlfe', 'admin.admin');
+
+-- ROLE
+INSERT INTO user_role(user_id, role_id) VALUES(1,1);
+INSERT INTO user_role(user_id, role_id) VALUES(2,1);
+INSERT INTO user_role(user_id, role_id) VALUES(2,2);
 
 
 INSERT INTO commande (id, created_at, updated_at, livraison, nom, mail, montant, remise, token, client_id, ref_paiement, date_paiement, mode_paiement, status) VALUES

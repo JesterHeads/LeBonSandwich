@@ -8,7 +8,7 @@ import org.lpro.leBonSandwich.boundaries.UserRepository;
 import org.lpro.leBonSandwich.entity.Commande;
 import org.lpro.leBonSandwich.entity.User;
 import org.lpro.leBonSandwich.control.GenericService;
-import org.lpro.leBonSandwich.boundaries.CommandeRepository;
+import org.lpro.leBonSandwich.boundaries.CommandeRessource;
 
 @Service
 public class GenericServiceImpl implements GenericService {
@@ -16,7 +16,7 @@ public class GenericServiceImpl implements GenericService {
     private UserRepository userRepository;
 
     @Autowired
-    private CommandeRepository commandeRepository;
+    private CommandeRessource commandeRessource;
 
     @Override
     public User findByUsername(String username) {
@@ -30,6 +30,6 @@ public class GenericServiceImpl implements GenericService {
 
     @Override
     public List<Commande> findAllCommandes() {
-        return (List<Commande>)commandeRepository.findAll();
+        return (List<Commande>)commandeRessource.findAll();
     }
 }
