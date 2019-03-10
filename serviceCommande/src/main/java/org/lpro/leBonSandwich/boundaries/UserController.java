@@ -16,17 +16,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.lpro.leBonSandwich.entity.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.hateoas.ExposesResourceFor;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value="/users", produces = MediaType.APPLICATION_JSON_VALUE)
+@ExposesResourceFor(User.class)
 public class UserController {
     @Autowired
     private GenericService userService;
 
     @GetMapping()
-    @PreAuthorize("hasAuthority('ADMIN_USER')")
-    public List<User> getUsers(){
-        return userService.findAllUsers();
+    public ResponseEntity<?>  getUsers(){
+        return new ResponseEntity<>("lol",HttpStatus.OK);
     }
 
     @PostMapping(value="/signin")

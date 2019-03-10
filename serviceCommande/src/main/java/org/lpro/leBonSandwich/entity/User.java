@@ -10,7 +10,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name = "username")
     private String username;
@@ -27,6 +27,14 @@ public class User {
 
     private String token;
 
+    public String getToken() {
+        return this.token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     /*
      * optionnel si on ne gere pas les roles
     */
@@ -38,11 +46,11 @@ public class User {
                     referencedColumnName = "id"))
     private List<Role> roles;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
