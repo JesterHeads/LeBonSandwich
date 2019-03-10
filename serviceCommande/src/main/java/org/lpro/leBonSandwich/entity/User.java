@@ -25,6 +25,8 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    private String email;
+
     private String token;
 
     public String getToken() {
@@ -48,6 +50,12 @@ public class User {
 
     public User(){
 
+    }
+
+    public User (String prenom, String nom, String username, String email){
+        this.firstName = prenom;
+        this.lastName = nom;
+        this.username = username;
     }
 
     public String getId() {
@@ -96,6 +104,33 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+
+    public String isValid(){
+        String valid = "";
+        if(this.firstName == null || this.firstName.isEmpty()){
+            valid += "veuillez saisir un prénom"+System.getProperty("line.separator");
+        }
+        if(this.lastName == null || this.lastName.isEmpty()){
+            valid += "Veuillez saisir un nom de famille"+System.getProperty("line.separator");
+        }
+        if(this.username == null || this.username.isEmpty()){
+            valid += "Veuillez saisir un nom d'utilisateur valide"+System.getProperty("line.separator");
+        }
+        if(this.email == null || this.email.isEmpty()){
+            valid += "Veuillez saisir une adresse email valide"+System.getProperty("line.separator");
+        }
+        return valid;
     }
 }
 

@@ -1,9 +1,7 @@
 package org.lpro.leBonSandwich.boundaries;
-<<<<<<< HEAD
 
 import java.util.Optional;
-=======
->>>>>>> 3a7937f199ca79af2bb45c17cb435d476efb86e2
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +18,7 @@ import org.lpro.leBonSandwich.boundaries.UserRepository;
 import org.lpro.leBonSandwich.entity.Commande;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.lpro.leBonSandwich.entity.User;
+import org.lpro.leBonSandwich.exception.BadRequest;
 import org.lpro.leBonSandwich.exception.NotFound;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,10 +69,15 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> inscription(@RequestBody User user){
-        return new ResponseEntity<>("lol",HttpStatus.OK);
+    public ResponseEntity<?> inscription(@RequestBody User user)throws BadRequest{
+        user.setId(UUID.randomUUID().toString());
+        String errors = user.isValid();
+        if(errors.isEmpty()){
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+            user.setPassword(encoder.encode(user.getPassword()));
+            ur.save(user);
+            return new ResponseEntity<>(user,HttpStatus.OK);
+        }
+        throw new BadRequest(errors);
     }
-
-
-
 }
