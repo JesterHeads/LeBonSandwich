@@ -10,6 +10,7 @@ import org.lpro.leBonSandwich.control.GenericService;
 import org.lpro.leBonSandwich.entity.Commande;
 import org.lpro.leBonSandwich.entity.User;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("/users")
@@ -22,4 +23,7 @@ public class ResourceController {
     public List<User> getUsers(){
         return userService.findAllUsers();
     }
+
+    @PostMapping
+
 }
