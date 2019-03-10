@@ -56,7 +56,7 @@ CREATE TABLE item (
 INSERT INTO app_role (id, role_name, description) VALUES (1, 'STANDARD_USER', 'Standard User');
 INSERT INTO app_role (id, role_name, description) VALUES (2, 'ADMIN_USER', 'Admin User');
 
--- USER (password: jwtpass) $2y$10$MZECL7TSzJiLd32CfIfRzuWu2xlLFxmxnQ2IIfST2UyWOB59JEPEa
+-- USER (password: jwtpass)
 INSERT INTO app_user (id, first_name, last_name, password, username) VALUES (1, 'John', 'Doe', '$2a$10$bj7qFEPpCcYOPqncrWQAnOGZ3onz78ipBoykaV9vidBFZxmhcfcHa', 'john.doe');
 INSERT INTO app_user (id, first_name, last_name, password, username) VALUES (2, 'Admin', 'Admin', '$2a$10$qtH0F1m488673KwgAfFXEOWxsoZSeHqqlB/8BTt3a6gsI5c2mdlfe', 'admin.admin');
 

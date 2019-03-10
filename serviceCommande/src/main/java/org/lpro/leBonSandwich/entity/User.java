@@ -1,6 +1,7 @@
 package org.lpro.leBonSandwich.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import javax.persistence.*;
 import java.util.List;
 
@@ -16,7 +17,6 @@ public class User {
     private String username;
 
     @Column(name = "password")
-    @JsonIgnore
     private String password;
 
     @Column(name = "first_name")
@@ -45,6 +45,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id",
                     referencedColumnName = "id"))
     private List<Role> roles;
+
+    public User(){
+
+    }
 
     public String getId() {
         return id;
