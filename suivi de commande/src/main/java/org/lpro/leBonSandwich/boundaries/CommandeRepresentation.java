@@ -179,7 +179,6 @@ public class CommandeRepresentation {
         }
     }
 
-    //TODO faire le put
     @PutMapping(value="/{id}")
     public ResponseEntity<?> putCommande(@RequestBody Commande commandeUpdated, @PathVariable("id") String id, @RequestHeader(value = "x-lbs-token") String headerToken) throws BadRequest,NotFound{
         
